@@ -8,3 +8,5 @@ export async function getCabins() {
   }
   return data;
 }
+
+export async function deleteCabins() {}
