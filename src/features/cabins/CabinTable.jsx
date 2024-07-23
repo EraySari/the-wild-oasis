@@ -38,7 +38,7 @@ function CabinTable() {
     // eslint-disable-next-line no-unused-vars
     error,
   } = useQuery({
-    queryKey: ["cabin"],
+    queryKey: ["cabins"],
     queryFn: getCabins,
   });
 

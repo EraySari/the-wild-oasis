@@ -1,5 +1,8 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
+import { deleteCabins } from "../../services/apiCabins";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const TableRow = styled.div`
   display: grid;
@@ -41,9 +44,31 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabinData }) {
-  const { name, image, maxCapacity, regularPrice, discount } = cabinData;
-  console.log(cabinData);
-  console.log("a");
+  const {
+    name,
+    image,
+    maxCapacity,
+    regularPrice,
+    discount,
+    // eslint-disable-next-line no-unused-vars
+    id: cabinId,
+  } = cabinData;
+
+  const queryClient = useQueryClient(); //app.jsteki queryclienti verir
+
+  // eslint-disable-next-line no-unused-vars
+  const { isLoading: isDeleting, mutate } = useMutation({
+    //mutate fonksiyonunu cagirdigimizda mutationFne verilen fonksiyonu cagirir
+    mutationFn: deleteCabins,
+    onSuccess: () => {
+      toast.success("Cabin has deleted");
+      queryClient.invalidateQueries({
+        queryKey: ["cabins"], //hangi verinin invalidated(catch'i gecersiz  kilma) olmasi gerektigini söylüyoruz
+      });
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
   return (
     <TableRow role="row">
       <Img src={image} />
@@ -51,7 +76,9 @@ function CabinRow({ cabinData }) {
       <div>{maxCapacity}</div>
       <Price>{regularPrice}</Price>
       <Discount>{discount}</Discount>
-      <button>Delete</button>
+      <button onClick={() => mutate(cabinId)} disabled={isDeleting}>
+        Delete
+      </button>
     </TableRow>
   );
 }
